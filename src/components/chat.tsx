@@ -23,7 +23,7 @@ import AIWriter from "react-aiwriter";
 import { IAttachment } from "@/types";
 import { AudioRecorder } from "./audio-recorder";
 import { Badge } from "./ui/badge";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import AppliedJobs from "@/MyComp/appliedJobs";
 import AIJobs from "@/MyComp/aiJobs";
 
@@ -36,14 +36,16 @@ interface ExtraContentFields {
 
 type ContentWithUser = Content & ExtraContentFields;
 
-export default function Page({ agentId }: { agentId: UUID }) {
+export default function Page({ agentId, chatContext }: { agentId: UUID; chatContext?: string }) {
     const { toast } = useToast();
+    const navigate = useNavigate();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [input, setInput] = useState("");
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
+    const [hasSentInitialMessage, setHasSentInitialMessage] = useState(false);
 
     const queryClient = useQueryClient();
 
@@ -172,8 +174,18 @@ export default function Page({ agentId }: { agentId: UUID }) {
     const [showAIJobs, setShowAIJobs] = useState(false);
 
     const handleBackPage = () => {
-        setShowAIJobs(true);
+        navigate(-1);
     };
+
+    useEffect(() => {
+        if (chatContext && !hasSentInitialMessage) {
+            sendMessageMutation.mutate({
+                message: chatContext,
+                selectedFile: null,
+            });
+            setHasSentInitialMessage(true);
+        }
+    }, [chatContext, hasSentInitialMessage]);
 
     if (showAIJobs) {
         return <AppliedJobs />;

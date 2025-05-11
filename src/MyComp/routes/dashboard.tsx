@@ -13,7 +13,7 @@ const Dashboard = () => {
           case "Applied Jobs":
             return <AppliedJobs></AppliedJobs>;
           default:
-            return <div>Page Not Found</div>;
+            return <AIJobs></AIJobs>;
         }
       };
 

@@ -5,14 +5,21 @@ import Chat from "@/components/chat";
 
 const AppliedJobs = () => {
     const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+    const [jobDescription, setJobDescription] = useState<string | null>(null);
 
-    if (selectedAgentId) {
-        return <Chat agentId={selectedAgentId} />;
+    const handleSelectAgent = (agentId: string, description: string) => {
+        setSelectedAgentId(agentId);
+        setJobDescription(description);
+    };
+
+    if (selectedAgentId && jobDescription) {
+        const chatContext = `Job Description: ${jobDescription}`;
+        return <Chat agentId={selectedAgentId as `${string}-${string}-${string}-${string}-${string}`} chatContext={chatContext} />;
     }
 
     return (
         <div>
-            <RequestedJobs onSelectAgent={setSelectedAgentId} />
+            <RequestedJobs onSelectAgent={handleSelectAgent} />
             <OngoingJobs />
         </div>
     );

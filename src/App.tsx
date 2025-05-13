@@ -24,6 +24,8 @@ const queryClient = new QueryClient({
 });
 const { networkConfig } = createNetworkConfig({
     localnet: { url: getFullnodeUrl('localnet') },
+    devnet: { url: getFullnodeUrl('localnet') },
+    testnet: { url: getFullnodeUrl('testnet') },
     mainnet: { url: getFullnodeUrl('mainnet') },
 });
 
@@ -31,8 +33,12 @@ function App() {
     useVersion();
     return (
         <QueryClientProvider client={queryClient}>
-            <SuiClientProvider networks={networkConfig} defaultNetwork="localnet">
-                <WalletProvider>
+            <SuiClientProvider networks={networkConfig} defaultNetwork="devnet">
+                <WalletProvider
+                slushWallet={{
+                    name: 'Roz',
+                }}
+                >
                     <div
                         className="dark antialiased"
                         style={{

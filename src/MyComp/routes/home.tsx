@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import Page from '@/components/chat';
 import { UUID } from '@elizaos/core';
+import { apiClient } from '@/lib/api';
+import { useQuery } from '@tanstack/react-query';
 
 const Home = () => {
     const [jobTitle, setJobTitle] = useState('');
@@ -12,9 +14,23 @@ const Home = () => {
         setShowChat(true);
     };
 
+    const query = useQuery({
+        queryKey: ["agents"],
+        queryFn: () => apiClient.getAgents(),
+        refetchInterval: 5_000
+    });
+
+    const agents = query?.data?.agents;
+
+    console.log(agents);
+
     if (showChat) {
         const chatContext = `Job Title: ${jobTitle}\nJob Description: ${jobDescription}`;
-        return <Page agentId="0974624e-994e-080b-aaf3-8f727cd30e6c" chatContext={chatContext} />;
+        return <Page
+            agentId="0974624e-994e-080b-aaf3-8f727cd30e6c"
+            chatContext={chatContext}
+            sourceComponent="home"
+        />;
     }
 
     return (

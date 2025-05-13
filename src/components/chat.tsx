@@ -25,8 +25,9 @@ import { AudioRecorder } from "./audio-recorder";
 import { Badge } from "./ui/badge";
 import { useNavigate } from "react-router-dom";
 import AppliedJobs from "@/MyComp/appliedJobs";
-import AIJobs from "@/MyComp/aiJobs";
+import Home from "@/MyComp/routes/home";
 
+type SourceComponent = 'home' | 'appliedJobs';
 
 interface ExtraContentFields {
     user: string;
@@ -36,7 +37,15 @@ interface ExtraContentFields {
 
 type ContentWithUser = Content & ExtraContentFields;
 
-export default function Page({ agentId, chatContext }: { agentId: UUID; chatContext?: string }) {
+export default function Page({
+    agentId,
+    chatContext,
+    sourceComponent
+}: {
+    agentId: UUID;
+    chatContext?: string;
+    sourceComponent: SourceComponent;
+}) {
     const { toast } = useToast();
     const navigate = useNavigate();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -46,6 +55,7 @@ export default function Page({ agentId, chatContext }: { agentId: UUID; chatCont
     const fileInputRef = useRef<HTMLInputElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
     const [hasSentInitialMessage, setHasSentInitialMessage] = useState(false);
+    const [showSourceComponent, setShowSourceComponent] = useState(false);
 
     const queryClient = useQueryClient();
 
@@ -171,10 +181,8 @@ export default function Page({ agentId, chatContext }: { agentId: UUID; chatCont
         leave: { opacity: 0, transform: "translateY(10px)" },
     });
 
-    const [showAIJobs, setShowAIJobs] = useState(false);
-
     const handleBackPage = () => {
-        navigate(-1);
+        setShowSourceComponent(true);
     };
 
     useEffect(() => {
@@ -187,8 +195,15 @@ export default function Page({ agentId, chatContext }: { agentId: UUID; chatCont
         }
     }, [chatContext, hasSentInitialMessage]);
 
-    if (showAIJobs) {
-        return <AppliedJobs />;
+    if (showSourceComponent) {
+        switch (sourceComponent) {
+            case 'home':
+                return <Home />;
+            case 'appliedJobs':
+                return <AppliedJobs />;
+            default:
+                return <Home />;
+        }
     }
 
     return (

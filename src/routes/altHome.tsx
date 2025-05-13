@@ -21,11 +21,14 @@ import Home from "@/MyComp/routes/home";
 import { useState } from "react";
 import Dashboard from "@/MyComp/routes/dashboard";
 import SeekJobs from "@/MyComp/seekJobs";
+import { PageType } from "@/types";
 // import { Sidebar } from "@/components/ui/sidebar";
 
+
+
 export default function Root() {
-    const [currentPage, setCurrentPage] = useState("Home");
-  
+    const [currentPage, setCurrentPage] = useState<PageType>("Home");
+    
     const query = useQuery({
       queryKey: ["agents"],
       queryFn: () => apiClient.getAgents(),
@@ -61,6 +64,10 @@ export default function Root() {
       </div>
     );
   }
+
+export function changePage(pageName: PageType) {
+  
+};  
 {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {agents?.map((agent: { id: UUID; name: string }) => (
                     <Card key={agent.id}>

@@ -1,6 +1,7 @@
+import { PageType } from "@/types";
 import { Home, LayoutDashboard, Settings, Speech, User, LogOut } from "lucide-react";
 
-const Sidebar = ({ onLinkClick }: { onLinkClick: (label: string) => void }) => {
+const Sidebar = ({ onLinkClick }: { onLinkClick: (lable: PageType) => void }) => {
   return (
     <div className=" w-64 bg-[#171717] from-gray-900 to-gray-800 text-white flex flex-col border-r-2">
       <nav className="flex-1 p-4 space-y-2">
@@ -23,8 +24,8 @@ const SidebarLink = ({
   onClick,
 }: {
   icon: React.ReactNode;
-  label: string;
-  onClick: (label: string) => void;
+  label: PageType;
+  onClick: (label: PageType) => void;
 }) => (
   <button
     onClick={() => onClick(label)}

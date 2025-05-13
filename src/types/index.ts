@@ -9,3 +9,5 @@ export interface Job {
     description: string;
     agent: string;
 }
+
+export type PageType = 'Home' | 'Dashboard' | 'Profile'| 'Seek Jobs' 

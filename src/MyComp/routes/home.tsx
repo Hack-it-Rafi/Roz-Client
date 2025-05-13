@@ -25,9 +25,20 @@ const Home = () => {
     console.log(agents);
 
     if (showChat) {
-        const chatContext = `Job Title: ${jobTitle}\nJob Description: ${jobDescription}`;
+        const chatContext = `Content Creation Request:
+                    Job Title: ${jobTitle}
+                    Job Description: ${jobDescription}
+
+                    Please help the client with the following:
+                    1. Discuss and finalize the content requirements
+                    2. Establish project goals and objectives
+                    3. Determine project timeline and deadlines
+                    4. Discuss budget and payment terms
+                    5. Provide guidance on content strategy and approach
+
+                    Please start by introducing yourself as a content creation specialist and ask the client about their specific needs and expectations.`;
         return <Page
-            agentId="0974624e-994e-080b-aaf3-8f727cd30e6c"
+            agentId={agents[0].id}
             chatContext={chatContext}
             sourceComponent="home"
         />;

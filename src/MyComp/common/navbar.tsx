@@ -4,10 +4,12 @@ import {
   useCurrentAccount,
   useSuiClientQuery,
 } from "@mysten/dapp-kit";
+import ScreenshotButton from "../screenshotButton";
+// import { useRef } from 'react';
 
 const Navbar = () => {
   const account = useCurrentAccount();
-
+//   const captureRef = useRef<HTMLDivElement>(null);
   const { data, isPending, error } = useSuiClientQuery("getBalance", {
     owner: account?.address + "",
   });
@@ -35,6 +37,7 @@ const Navbar = () => {
           </div>
         )}
       </div>
+      <ScreenshotButton />
     </div>
   );
 };

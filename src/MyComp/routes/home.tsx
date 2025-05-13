@@ -22,8 +22,6 @@ const Home = () => {
 
     const agents = query?.data?.agents;
 
-    console.log(agents);
-
     if (showChat) {
         const chatContext = `Job Title: ${jobTitle}\nJob Description: ${jobDescription}`;
         return <Page

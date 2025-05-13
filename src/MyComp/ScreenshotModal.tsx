@@ -1,7 +1,10 @@
+import { useCallback, useEffect, useState } from 'react';
+import { Tusky } from '@tusky-io/ts-sdk/web';
+
 interface ScreenshotModalProps {
-  screenshotUrl: string | null; // Data URL of the screenshot
-  onClose: () => void; // Close the modal
-  onConfirm: () => void; // Redirect function for "Looks Good"
+  screenshotUrl: string | null;
+  onClose: () => void;
+  onConfirm: () => void;
 }
 
 const ScreenshotModal: React.FC<ScreenshotModalProps> = ({
@@ -9,6 +12,46 @@ const ScreenshotModal: React.FC<ScreenshotModalProps> = ({
   onClose,
   onConfirm,
 }) => {
+  const [uploadStatus, setUploadStatus] = useState<string>('');
+
+  // Convert data URL to Blob and upload to Tusky
+  const uploadToTusky = useCallback(async (dataUrl: string) => {
+    try {
+      setUploadStatus('Uploading to Walrus...');
+
+      // Initialize Tusky with API key
+      const tusky = new Tusky({ apiKey: import.meta.env.VITE_TUSKY_API_KEY });
+
+      // Convert data URL to Blob
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      const file = new File([blob], 'screenshot.png', { type: 'image/png' });
+
+      // Create a temporary file path (in-memory, since browsers don't use file paths)
+      // For simplicity, we use the File object directly with a custom path-like name
+      const uploadId = await tusky.file.upload(
+        import.meta.env.VITE_TUSKY_VAULT_ID,
+        file
+      );
+
+      setUploadStatus(`Uploaded successfully! Upload ID: ${uploadId}`);
+    } catch (error) {
+      console.error('Failed to upload to Walrus:', error);
+      setUploadStatus('Failed to upload to Walrus');
+    }
+  }, []);
+
+  // Trigger upload when screenshotUrl changes
+  useEffect(() => {
+    if (screenshotUrl) {
+        console.log("Uploading to Tusky...");
+        
+      uploadToTusky(screenshotUrl);
+    }
+    console.log({screenshotUrl});
+    
+  }, [screenshotUrl, uploadToTusky]);
+
   if (!screenshotUrl) return null;
 
   return (
@@ -20,6 +63,7 @@ const ScreenshotModal: React.FC<ScreenshotModalProps> = ({
           alt="Page Screenshot"
           className="w-full h-auto mb-4"
         />
+        <h1 className="mb-4 text-black">{uploadStatus}</h1>
         <div className="flex justify-end gap-4">
           <button
             onClick={onClose}

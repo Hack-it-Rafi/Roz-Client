@@ -14,7 +14,11 @@ const AppliedJobs = () => {
 
     if (selectedAgentId && jobDescription) {
         const chatContext = `Job Description: ${jobDescription}`;
-        return <Chat agentId={selectedAgentId as `${string}-${string}-${string}-${string}-${string}`} chatContext={chatContext} />;
+        return <Chat
+            agentId={selectedAgentId as `${string}-${string}-${string}-${string}-${string}`}
+            chatContext={chatContext}
+            sourceComponent="appliedJobs"
+        />;
     }
 
     return (

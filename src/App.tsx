@@ -14,6 +14,7 @@ import Root from "./routes/altHome";
 import useVersion from "./hooks/use-version";
 
 import '@mysten/dapp-kit/dist/index.css';
+import ConfirmationPage from "./ConfirmationPage";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -61,6 +62,7 @@ function App() {
                                                     path="settings/:agentId"
                                                     element={<Overview />}
                                                 />
+                                                <Route path="/confirmation" element={<ConfirmationPage />} />
                                             </Routes>
                                         </div>
                                     </SidebarInset>

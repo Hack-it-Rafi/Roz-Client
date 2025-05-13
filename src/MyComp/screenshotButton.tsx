@@ -4,11 +4,13 @@ import html2canvas from 'html2canvas';
 interface ScreenshotButtonProps {
   buttonText?: string;
   className?: string;
+  onScreenshot: (dataUrl: string) => void; // Callback to pass screenshot URL
 }
 
 const ScreenshotButton: React.FC<ScreenshotButtonProps> = ({
-  buttonText = 'Take Screenshot2',
+  buttonText = 'Take Screenshot',
   className = 'bg-blue-500 text-white px-4 py-2 rounded-md',
+  onScreenshot,
 }) => {
   const captureScreenshot = useCallback(async () => {
     try {
@@ -16,19 +18,16 @@ const ScreenshotButton: React.FC<ScreenshotButtonProps> = ({
         useCORS: true,
         allowTaint: true,
         scrollX: 0,
-        scrollY: -window.scrollY, // Adjust for scrolled position
+        scrollY: -window.scrollY,
         windowWidth: document.documentElement.scrollWidth,
         windowHeight: document.documentElement.scrollHeight,
       });
       const dataURL = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.href = dataURL;
-      link.download = 'full-page-screenshot.png';
-      link.click();
+      onScreenshot(dataURL);
     } catch (error) {
       console.error('Failed to capture screenshot:', error);
     }
-  }, []);
+  }, [onScreenshot]);
 
   return (
     <button onClick={captureScreenshot} className={className}>

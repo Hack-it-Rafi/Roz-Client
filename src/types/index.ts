@@ -3,3 +3,9 @@ export interface IAttachment {
     contentType: string;
     title: string;
 }
+
+export interface Job {
+    id: string;
+    description: string;
+    agent: string;
+}

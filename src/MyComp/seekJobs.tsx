@@ -7,7 +7,7 @@ const SeekJobs = () => {
     const [jobs, setJobs] = useState([]);
 
     const fetchJobs = async () => {
-        const res = await axios.get('http://localhost:5000/jobs');
+        const res = await axios.get('http://localhost:3001/jobs');
         setJobs(res.data);
     };
 
@@ -18,7 +18,7 @@ const SeekJobs = () => {
         }
 
         try {
-            await axios.post('http://localhost:5000/jobs/apply', {
+            await axios.post('http://localhost:3001/jobs/apply', {
                 jobId,
                 accountLabel: account.label,
             });

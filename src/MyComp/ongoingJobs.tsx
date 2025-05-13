@@ -1,14 +1,15 @@
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Job } from '@/types';
 
 const OngoingJobs = () => {
     const account = useCurrentAccount();
-    const [appliedJobs, setAppliedJobs] = useState([]);
+    const [appliedJobs, setAppliedJobs] = useState<Job[]>([]);
 
     const fetchAppliedJobs = async () => {
         if (!account?.label) return;
-        const res = await axios.get(`http://localhost:5000/jobs/applied/${account.label}`);
+        const res = await axios.get(`http://localhost:3001/jobs/applied/${account.label}`);
         setAppliedJobs(res.data);
     };
 

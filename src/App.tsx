@@ -33,7 +33,7 @@ function App() {
     useVersion();
     return (
         <QueryClientProvider client={queryClient}>
-            <SuiClientProvider networks={networkConfig} defaultNetwork="devnet">
+            <SuiClientProvider networks={networkConfig} defaultNetwork="testnet">
                 <WalletProvider
                 slushWallet={{
                     name: 'Roz',

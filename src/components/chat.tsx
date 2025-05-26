@@ -96,30 +96,21 @@ export default function Page({
             ]
             : undefined;
 
-        const newMessages = [
-            {
-                text: input,
-                user: "user",
-                createdAt: Date.now(),
-                attachments,
-            },
-            {
-                text: input,
-                user: "system",
-                isLoading: true,
-                createdAt: Date.now(),
-            },
-        ];
+        // Only add user message for now
+        const userMessage = {
+            text: input,
+            user: "user",
+            createdAt: Date.now(),
+            attachments,
+        };
 
         queryClient.setQueryData(
             ["messages", agentId],
-            (old: ContentWithUser[] = []) => [...old, ...newMessages]
+            (old: ContentWithUser[] = []) => [...old, userMessage]
         );
 
-        sendMessageMutation.mutate({
-            message: input,
-            selectedFile: selectedFile ? selectedFile : null,
-        });
+        // Handle the message (this will either add a custom message or trigger the mutation)
+        handleSend(input, selectedFile);
 
         setSelectedFile(null);
         setInput("");
@@ -187,13 +178,50 @@ export default function Page({
 
     useEffect(() => {
         if (chatContext && !hasSentInitialMessage) {
-            sendMessageMutation.mutate({
-                message: chatContext,
-                selectedFile: null,
-            });
+            handleSend(chatContext, null);
             setHasSentInitialMessage(true);
         }
     }, [chatContext, hasSentInitialMessage]);
+
+    const addCustomMessage = (message: string) => {
+        queryClient.setQueryData(
+            ["messages", agentId],
+            (old: ContentWithUser[] = []) => [
+                ...old,
+                {
+                    id: `custom-${Date.now()}`,
+                    text: message,
+                    user: "system",
+                    createdAt: Date.now(),
+                    isLoading: false,
+                },
+            ]
+        );
+    };
+
+    const handleSend = (message: string, selectedFile?: File | null) => {
+        if (message === "secret") {
+            addCustomMessage("I am a secret message");
+            return;
+        }
+        
+        // For non-custom messages, add the loading message
+        queryClient.setQueryData(
+            ["messages", agentId],
+            (old: ContentWithUser[] = []) => [
+                ...old,
+                {
+                    text: message,
+                    user: "system",
+                    isLoading: true,
+                    createdAt: Date.now(),
+                },
+            ]
+        );
+        
+        // Then trigger the mutation
+        sendMessageMutation.mutate({ message, selectedFile });
+    };
 
     if (showSourceComponent) {
         switch (sourceComponent) {

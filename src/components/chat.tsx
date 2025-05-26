@@ -200,6 +200,22 @@ export default function Page({
     };
 
     const handleSend = (message: string, selectedFile?: File | null) => {
+    
+        if (messages.length>1) {
+            console.log("Last message: ", messages[messages.length-1].text);
+            if (message === "That is all") {
+                addCustomMessage("yes or no");
+                return;
+            }
+            if (messages[messages.length-1].text === "yes or no") {
+                if (message === "yes") {
+                    addCustomMessage("Redirecting to applied jobs");
+                    return;
+                }
+                return;
+            }
+        }
+       
         if (message === "secret") {
             addCustomMessage("I am a secret message");
             return;

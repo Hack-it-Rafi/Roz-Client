@@ -7,12 +7,20 @@ interface ScreenshotModalProps {
   onConfirm: () => void;
 }
 
+function isUnknown(value: any) {
+    return value === undefined || value === null || Number.isNaN(value);
+}
+
+function sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 const ScreenshotModal: React.FC<ScreenshotModalProps> = ({
   screenshotUrl,
   onClose,
   onConfirm,
 }) => {
-  const [uploadStatus, setUploadStatus] = useState<string>('');
+  const [uploadStatus, setUploadStatus] = useState<any>('');
 
   // Convert data URL to Blob and upload to Tusky
   const uploadToTusky = useCallback(async (dataUrl: string) => {
@@ -26,7 +34,8 @@ const ScreenshotModal: React.FC<ScreenshotModalProps> = ({
       const response = await fetch(dataUrl);
       const blob = await response.blob();
       const file = new File([blob], 'screenshot.png', { type: 'image/png' });
-
+      console.log("Uploading using Tusky...");
+    
       // Create a temporary file path (in-memory, since browsers don't use file paths)
       // For simplicity, we use the File object directly with a custom path-like name
       const uploadId = await tusky.file.upload(
@@ -34,7 +43,30 @@ const ScreenshotModal: React.FC<ScreenshotModalProps> = ({
         file
       );
 
-      setUploadStatus(`Uploaded successfully! Upload ID: ${uploadId}`);
+      setUploadStatus(`Uploaded successfully! Upload ID: ${uploadId} <br> IF you wait you would get the Blob ID.`);
+      console.log("Fetching Metadata...");
+
+      let fileMetadata = await tusky.file.get(uploadId);
+      console.log("Fetching BID", fileMetadata.blobId);
+      console.log({fileMetadata});
+      
+      
+      while (!isUnknown(fileMetadata.blobId)) {
+        console.log("Trying to get Blob ID...");
+        await sleep(5000);
+        fileMetadata = await tusky.file.get(uploadId);
+        console.log("Fetching BID", fileMetadata.blobId);
+      }
+      setUploadStatus(
+        <a
+          href={`https://walruscan.com/mainnet/blob/${fileMetadata.blobId}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 underline"
+        >
+          View on Walruscan (Blob ID: {fileMetadata.blobId})
+        </a>
+      );
     } catch (error) {
       console.error('Failed to upload to Walrus:', error);
       setUploadStatus('Failed to upload to Walrus');
